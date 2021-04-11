@@ -1,0 +1,38 @@
+<h1>Front Porch Light</h1>
+<div id="light">
+    <div class="meter">
+        <span style="width: <%= @brightness %>%; background-color: <%= temp_color(@temp) %>" >
+          <%= @brightness %>%
+        </span>
+    </div>
+
+    <button phx-click="off">
+        <img src="images/light-off.svg" />
+    </button>
+
+    <button phx-click="down">
+        <img src="images/down.svg" />
+    </button>
+
+    <button phx-click="disco">
+        Light Me Up!
+    </button>
+
+    <button phx-click="up">
+        <img src="images/up.svg" />
+    </button>
+
+    <button phx-click="on">
+        <img src="images/light-on.svg" />
+    </button>
+
+    <form phx-change="update">
+        <input type="range" min="1" max="100" name="brightness" value="<%= @brightness %>" />
+        Color Temperature:
+        <%= for temp <- [3000, 4000, 5000] do %>
+        <input type="radio" id="<%= temp %>" name="temp" value="<%= temp %>" <%= if @temp == temp, do: "checked" %> />
+        <label for="<%= temp %>"><%= temp %></label>
+        <%= end %>
+    </form>
+</div>
+
