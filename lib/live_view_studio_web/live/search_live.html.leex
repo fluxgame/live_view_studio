@@ -9,6 +9,23 @@
             <img src="images/search.svg"/>
         </button>
     </form>
+    <form phx-submit="city-search" phx-change="suggest-city">
+        <input type="text" name="city" value="<%= @city %>"
+               placeholder="City"
+               autocomplete="off"
+               list="matches"
+               phx-debounce="500"
+                <%= if @loading, do: "readonly" %> />
+        <button <%= if @loading, do: "disabled" %> type="submit">
+            <img src="images/search.svg"/>
+        </button>
+    </form>
+
+    <datalist id="matches">
+        <%= for match <- @matches do %>
+            <option value="<%= match %>"><%= match %></option>
+        <% end %>
+    </datalist>
     <%= if @loading do %>
     <div class="loader">
         Loading...

@@ -9,6 +9,23 @@
             <img src="images/search.svg"/>
         </button>
     </form>
+    <form phx-submit="airport-search" phx-change="suggest-airport">
+        <input type="text" name="airport" value="<%= @airport %>"
+               placeholder="Airport Code"
+               autocomplete="off"
+               list="matches"
+               phx-debounce="500"
+                <%= if @loading, do: "readonly" %> />
+        <button <%= if @loading, do: "disabled" %> type="submit">
+            <img src="images/search.svg"/>
+        </button>
+    </form>
+
+    <datalist id="matches">
+        <%= for match <- @matches do %>
+        <option value="<%= match %>"><%= match %></option>
+        <% end %>
+    </datalist>
 
     <%= if @loading do %>
     <div class="loader">Loading...</div>
