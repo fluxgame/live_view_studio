@@ -1,80 +1,115 @@
 defmodule LiveViewStudio.Flights do
+  @moduledoc """
+  The Flights context.
+  """
+
+  import Ecto.Query, warn: false
+  alias LiveViewStudio.Repo
+
+  alias LiveViewStudio.Flights.Flight
+
+  @doc """
+  Returns the list of flight.
+
+  ## Examples
+
+      iex> list_flight()
+      [%Flight{}, ...]
+
+  """
+  def list_flight do
+    Repo.all(Flight)
+  end
+
   def search_by_number(number) do
-    :timer.sleep(2000)
-    list_flights()
-    |> Enum.filter(&(&1.number == number))
+    from(f in Flight, where: f.number == ^number)
+    |> Repo.all()
   end
 
   def search_by_airport(airport) do
-    list_flights()
-    |> Enum.filter(&(&1.origin == airport || &1.destination == airport))
+    from(f in Flight, where: f.origin == ^airport or f.destination == ^airport)
+    |> Repo.all()
   end
 
-  def list_flights do
-    [
-      %{
-        number: "450",
-        origin: "DEN",
-        destination: "ORD",
-        departure_time: Timex.shift(Timex.now(), days: 1),
-        arrival_time: Timex.shift(Timex.now(), days: 1, hours: 2)
-      },
-      %{
-        number: "450",
-        origin: "DEN",
-        destination: "ORD",
-        departure_time: Timex.shift(Timex.now(), days: 2),
-        arrival_time: Timex.shift(Timex.now(), days: 2, hours: 2)
-      },
-      %{
-        number: "450",
-        origin: "DEN",
-        destination: "ORD",
-        departure_time: Timex.shift(Timex.now(), days: 3),
-        arrival_time: Timex.shift(Timex.now(), days: 3, hours: 2)
-      },
-      %{
-        number: "860",
-        origin: "DFW",
-        destination: "ORD",
-        departure_time: Timex.shift(Timex.now(), days: 1),
-        arrival_time: Timex.shift(Timex.now(), days: 1, hours: 3)
-      },
-      %{
-        number: "860",
-        origin: "DFW",
-        destination: "ORD",
-        departure_time: Timex.shift(Timex.now(), days: 2),
-        arrival_time: Timex.shift(Timex.now(), days: 2, hours: 3)
-      },
-      %{
-        number: "860",
-        origin: "DFW",
-        destination: "ORD",
-        departure_time: Timex.shift(Timex.now(), days: 3),
-        arrival_time: Timex.shift(Timex.now(), days: 3, hours: 3)
-      },
-      %{
-        number: "740",
-        origin: "DAB",
-        destination: "DEN",
-        departure_time: Timex.shift(Timex.now(), days: 1),
-        arrival_time: Timex.shift(Timex.now(), days: 1, hours: 4)
-      },
-      %{
-        number: "740",
-        origin: "DAB",
-        destination: "DEN",
-        departure_time: Timex.shift(Timex.now(), days: 2),
-        arrival_time: Timex.shift(Timex.now(), days: 2, hours: 4)
-      },
-      %{
-        number: "740",
-        origin: "DAB",
-        destination: "DEN",
-        departure_time: Timex.shift(Timex.now(), days: 3),
-        arrival_time: Timex.shift(Timex.now(), days: 3, hours: 4)
-      }
-    ]
+
+  @doc """
+  Gets a single flight.
+
+  Raises `Ecto.NoResultsError` if the Flight does not exist.
+
+  ## Examples
+
+      iex> get_flight!(123)
+      %Flight{}
+
+      iex> get_flight!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_flight!(id), do: Repo.get!(Flight, id)
+
+  @doc """
+  Creates a flight.
+
+  ## Examples
+
+      iex> create_flight(%{field: value})
+      {:ok, %Flight{}}
+
+      iex> create_flight(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_flight(attrs \\ %{}) do
+    %Flight{}
+    |> Flight.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a flight.
+
+  ## Examples
+
+      iex> update_flight(flight, %{field: new_value})
+      {:ok, %Flight{}}
+
+      iex> update_flight(flight, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_flight(%Flight{} = flight, attrs) do
+    flight
+    |> Flight.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a flight.
+
+  ## Examples
+
+      iex> delete_flight(flight)
+      {:ok, %Flight{}}
+
+      iex> delete_flight(flight)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_flight(%Flight{} = flight) do
+    Repo.delete(flight)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking flight changes.
+
+  ## Examples
+
+      iex> change_flight(flight)
+      %Ecto.Changeset{data: %Flight{}}
+
+  """
+  def change_flight(%Flight{} = flight, attrs \\ %{}) do
+    Flight.changeset(flight, attrs)
   end
 end

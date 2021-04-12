@@ -5,7 +5,8 @@ defmodule LiveViewStudioWeb.SearchLive do
   alias LiveViewStudio.Cities
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, zip: "", city: "", stores: [], matches: [], loading: false)}
+    socket = assign(socket, zip: "", city: "", stores: [], matches: [], loading: false)
+    {:ok, socket, temporary_assigns: [stores: []]}
   end
 
   def handle_event("zip-search", %{"zip" => zip}, socket) do

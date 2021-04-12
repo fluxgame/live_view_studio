@@ -27,12 +27,14 @@
     </button>
 
     <form phx-change="update">
-        <input type="range" min="1" max="100" name="brightness" value="<%= @brightness %>" />
+        <input type="range" min="1" max="100" name="brightness"
+               value="<%= @brightness %>" />
         Color Temperature:
         <%= for temp <- [3000, 4000, 5000] do %>
-        <input type="radio" id="<%= temp %>" name="temp" value="<%= temp %>" <%= if @temp == temp, do: "checked" %> />
+        <input type="radio" id="<%= temp %>" name="temp"
+               value="<%= temp %>" <%= if @temp == temp, do: "checked" %> />
         <label for="<%= temp %>"><%= temp %></label>
-        <%= end %>
+        <% end %>
     </form>
 </div>
 

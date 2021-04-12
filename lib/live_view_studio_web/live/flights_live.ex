@@ -5,12 +5,13 @@ defmodule LiveViewStudioWeb.FlightsLive do
   alias LiveViewStudio.Airports
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, flight: "", airport: "", flights: [], matches: [], loading: false)}
+    socket = assign(socket, flight: "", airport: "", flights: [], matches: [], loading: false)
+    {:ok, socket, temporary_assigns: [flights: []]}
   end
 
   def handle_event("flight-search", %{"flight" => flight}, socket) do
     send(self(), {:run_flight_search, flight})
-    {:noreply, assign(socket, flight: flight, flights: [], loading: true)}
+    {:noreply, assign(socket, flight: flight, airport: "", lights: [], loading: true)}
   end
 
   def handle_info({:run_flight_search, flight}, socket) do
@@ -32,7 +33,7 @@ defmodule LiveViewStudioWeb.FlightsLive do
 
   def handle_event("airport-search", %{"airport" => airport}, socket) do
     send(self(), {:run_airport_search, airport})
-    {:noreply, assign(socket, airport: airport, flights: [], loading: true)}
+    {:noreply, assign(socket, airport: airport, flight: "", flights: [], loading: true)}
   end
 
   def handle_info({:run_airport_search, airport}, socket) do
