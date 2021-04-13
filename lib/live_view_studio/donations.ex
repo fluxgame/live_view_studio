@@ -39,26 +39,21 @@ defmodule LiveViewStudio.Donations do
   ]
   """
 
-  def list_donations(%{per_page: "all", page: _}) do
-    list_donations()
-  end
-
   def list_donations(criteria) when is_list(criteria) do
-    if criteria[:paginate].per_page == "all" do
-      list_donations()
-    else
-      query = from(d in Donation)
-      Enum.reduce(criteria, query, fn
-        {:paginate, %{page: page, per_page: per_page}}, query ->
-          from q in query,
-               offset: ^((page - 1) * per_page),
-               limit: ^per_page
-
-        {:sort, %{sort_by: sort_by, sort_order: sort_order}}, query ->
-          from q in query, order_by: [{^sort_order, ^sort_by}]
-      end)
-      |> Repo.all()
+    IO.inspect criteria
+    query = from(d in Donation)
+    criteria = if criteria[:paginate].per_page == "all" do
+      Keyword.delete(criteria, :paginate)
     end
+    Enum.reduce(criteria, query, fn
+      {:paginate, %{page: page, per_page: per_page}}, query ->
+        from q in query,
+             offset: ^((page - 1) * per_page),
+             limit: ^per_page
+      {:sort, %{sort_by: sort_by, sort_order: sort_order}}, query ->
+        from q in query, order_by: [{^sort_order, ^sort_by}]
+    end)
+    |> Repo.all()
   end
 
   @doc """
