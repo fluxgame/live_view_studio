@@ -2,17 +2,48 @@
 <div id="servers">
     <div class="sidebar">
         <nav>
-            <%= for server <- @servers do %>
-            <div>
-                <%= live_patch link_body(server),
+            <%= live_patch "New Server", to: Routes.servers_path(@socket, :new), class: "button" %>
+            <div id="server_list" phx-update="prepend">
+                <%= for server <- @servers do %>
+                <div id="<%= server.id %>">
+                    <%= live_patch link_body(server),
                          to: Routes.live_path(@socket, __MODULE__, server.name),
                          class: if server == @selected_server, do: 'active' %>
+                </div>
+                <% end %>
             </div>
-            <% end %>
         </nav>
     </div>
     <div class="main">
         <div class="wrapper">
+            <%= if @live_action == :new do %>
+                <%= f = form_for @changeset, "#", phx_submit: "save" %>
+                <div class="field">
+                    <%= label f, :name, "Name" %>
+                    <%= text_input f, :name, autocomplete: "off" %>
+                    <%= error_tag f, :name %>
+                </div>
+                <div class="field">
+                    <%= label f, :framework, "Framework" %>
+                    <%= text_input f, :framework, autocomplete: "off" %>
+                    <%= error_tag f, :framework %>
+                </div>
+                <div class="field">
+                    <%= label f, :size, "Size (MB)" %>
+                    <%= number_input f, :size, autocomplete: "off" %>
+                    <%= error_tag f, :size %>
+                </div>
+                <div class="field">
+                    <%= label f, :git_repo, "Git Repo" %>
+                    <%= text_input f, :git_repo, autocomplete: "off" %>
+                    <%= error_tag f, :git_repo %>
+                </div>
+                <%= submit "Save", phx_disable_with: "Saving..."  %>
+                <%= live_patch "Cancel",
+                    to: Routes.live_path(@socket, __MODULE__),
+                    class: "cancel" %>
+                </form>
+            <% else %>
             <div class="card">
                 <div class="header">
                     <h2><%= @selected_server.name %></h2>
@@ -48,6 +79,7 @@
                     </blockquote>
                 </div>
             </div>
+            <% end %>
         </div>
     </div>
 </div>

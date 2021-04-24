@@ -18,6 +18,7 @@ defmodule LiveViewStudioWeb.FoodBankLive do
 
     paginate_options = %{page: params["page"], per_page: params["per_page"]}
     sort_options = %{sort_by: params["sort_by"], sort_order: params["sort_order"]}
+
     donations = Donations.list_donations(paginate: paginate_options, sort: sort_options)
 
     socket = assign(socket,
@@ -44,7 +45,7 @@ defmodule LiveViewStudioWeb.FoodBankLive do
     |> Map.put("per_page",
       case params["per_page"] do
         "all" -> "all"
-        _ -> case Integer.parse(params["per_page"]) do
+        _ -> case Integer.parse(params["per_page"] || "5") do
                {number, _} -> number
                :error -> 5
              end
@@ -55,7 +56,7 @@ defmodule LiveViewStudioWeb.FoodBankLive do
     else
       max_pages = max_pages(total_donations, params["per_page"])
       Map.put(params, "page",
-        case Integer.parse(params["page"]) do
+        case Integer.parse(params["page"] || "1") do
           {page, _} when page < 1 -> 1
           {page, _} when page > max_pages -> max_pages
           {page, _} -> page
@@ -76,7 +77,7 @@ defmodule LiveViewStudioWeb.FoodBankLive do
     end
     sort_order = case options do
       %{sort_by: ^sort_by, sort_order: sort_order} -> toggle_sort_order(sort_order)
-      _ -> :desc
+      _ -> :asc
     end
     options = Map.merge(options, %{sort_by: sort_by, sort_order: sort_order})
     live_patch(text, to: Routes.live_path(socket, __MODULE__, options))

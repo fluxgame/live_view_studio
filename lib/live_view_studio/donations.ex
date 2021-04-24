@@ -40,10 +40,11 @@ defmodule LiveViewStudio.Donations do
   """
 
   def list_donations(criteria) when is_list(criteria) do
-    IO.inspect criteria
     query = from(d in Donation)
     criteria = if criteria[:paginate].per_page == "all" do
       Keyword.delete(criteria, :paginate)
+    else
+      criteria
     end
     Enum.reduce(criteria, query, fn
       {:paginate, %{page: page, per_page: per_page}}, query ->

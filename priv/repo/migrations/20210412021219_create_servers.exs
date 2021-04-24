@@ -15,5 +15,6 @@ defmodule LiveViewStudio.Repo.Migrations.CreateServers do
       timestamps()
     end
 
+    create unique_index(:servers, [:name])
   end
 end
