@@ -8,6 +8,18 @@ defmodule LiveViewStudio.Volunteers do
 
   alias LiveViewStudio.Volunteers.Volunteer
 
+  @topic inspect(__MODULE__)
+
+  def subscribe do
+    Phoenix.PubSub.subscribe(LiveViewStudio.PubSub, @topic)
+  end
+
+  defp broadcast({:error, _reason} = error, _event), do: error
+  defp broadcast({:ok, volunteer}, event) do
+    Phoenix.PubSub.broadcast(LiveViewStudio.PubSub, @topic, {event, volunteer})
+    {:ok, volunteer}
+  end
+
   @doc """
   Returns the list of volunteers.
 
@@ -53,6 +65,7 @@ defmodule LiveViewStudio.Volunteers do
     %Volunteer{}
     |> Volunteer.changeset(attrs)
     |> Repo.insert()
+    |> broadcast(:volunteer_created)
   end
 
   @doc """
@@ -71,6 +84,7 @@ defmodule LiveViewStudio.Volunteers do
     volunteer
     |> Volunteer.changeset(attrs)
     |> Repo.update()
+    |> broadcast(:volunteer_updated)
   end
 
   def toggle_volunteer_status(%Volunteer{} = volunteer) do

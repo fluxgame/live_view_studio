@@ -5,6 +5,7 @@ defmodule LiveViewStudioWeb.ServersLive do
   alias LiveViewStudio.Servers.Server
 
   def mount(_, _, socket) do
+    if connected?(socket), do: Servers.subscribe()
     servers = Servers.list_servers()
     socket = socket
     |> assign_selected_server(hd(servers))
@@ -30,7 +31,6 @@ defmodule LiveViewStudioWeb.ServersLive do
     case Servers.create_server(params) do
       {:ok, server} ->
         socket = socket
-        |> update(:servers, fn servers -> [server | servers] end)
         |> push_patch(to: Routes.live_path(socket, __MODULE__, id: server.name))
         :timer.sleep(500)
         {:noreply, socket}
@@ -56,6 +56,33 @@ defmodule LiveViewStudioWeb.ServersLive do
     servers = Servers.list_servers()
     :timer.sleep(500)
     {:noreply, assign(socket, selected_server: server, servers: servers)}
+  end
+
+  def handle_info({:server_created, server}, socket) do
+    socket = update(socket, :servers, fn servers -> [server | servers] end)
+    {:noreply, socket}
+  end
+
+  def handle_info({:server_updated, server}, socket) do
+
+    socket = 
+      if server.id == socket.assigns.selected_server.id do
+        assign(socket, selected_server: server)
+      else
+        socket
+      end
+
+    socket = update(socket, :servers, replace_by_id(server, socket.assigns.servers))
+    {:noreply, socket}
+  end
+
+  defp replace_by_id(server, servers) do
+    for s <- servers do
+      case s.id == server.id do
+        true -> server
+        false -> s
+      end
+    end
   end
 
   defp link_body(server) do
