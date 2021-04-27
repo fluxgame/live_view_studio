@@ -29,7 +29,8 @@ defmodule LiveViewStudioWeb.Router do
     live "/servers/:id", ServersLive
     live "/food-bank", FoodBankLive
     live "/volunteers", VolunteersLive
-
+    live "/pizza-orders", PizzaOrdersLive
+    live "/datepicker", DatePickerLive
   end
 
   # Other scopes may use custom stacks.
