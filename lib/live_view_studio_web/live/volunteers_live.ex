@@ -23,4 +23,25 @@ defmodule LiveViewStudioWeb.VolunteersLive do
         {:noreply, assign(socket, changeset: changeset)}
     end
   end
+
+  def handle_event("validate", %{"volunteer" => params}, socket) do
+    changeset = 
+      %Volunteer{}
+      |> Volunteers.change_volunteer(params)
+      |> Map.put(:action, :insert)
+
+    socket = assign(socket, changeset: changeset)
+    {:noreply, socket}
+  end
+
+  def handle_event("toggle-status", %{"id" => id}, socket) do
+    Volunteers.get_volunteer!(id)
+    |> Volunteers.toggle_volunteer_status()
+
+    volunteers = Volunteers.list_volunteers()
+
+    :timer.sleep(500)
+
+    {:noreply, assign(socket, volunteers: volunteers)}
+  end
 end

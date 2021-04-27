@@ -2,7 +2,9 @@
 <div id="servers">
     <div class="sidebar">
         <nav>
-            <%= live_patch "New Server", to: Routes.servers_path(@socket, :new), class: "button" %>
+          <%= live_patch "New Server", 
+                to: Routes.servers_path(@socket, :new), 
+                class: "button" %>
             <div id="server_list" phx-update="prepend">
                 <%= for server <- @servers do %>
                 <div id="<%= server.id %>">
@@ -17,25 +19,35 @@
     <div class="main">
         <div class="wrapper">
             <%= if @live_action == :new do %>
-                <%= f = form_for @changeset, "#", phx_submit: "save" %>
+              <%= f = form_for @changeset, "#", 
+                        phx_submit: "save",
+                        phx_change: "validate" %>
                 <div class="field">
                     <%= label f, :name, "Name" %>
-                    <%= text_input f, :name, autocomplete: "off" %>
+                    <%= text_input f, :name, 
+                          autocomplete: "off",
+                          phx_debounce: "1000" %>
                     <%= error_tag f, :name %>
                 </div>
                 <div class="field">
                     <%= label f, :framework, "Framework" %>
-                    <%= text_input f, :framework, autocomplete: "off" %>
+                    <%= text_input f, :framework, 
+                          autocomplete: "off",
+                          phx_debounce: "1000" %>
                     <%= error_tag f, :framework %>
                 </div>
                 <div class="field">
                     <%= label f, :size, "Size (MB)" %>
-                    <%= number_input f, :size, autocomplete: "off" %>
+                    <%= number_input f, :size, 
+                          autocomplete: "off",
+                          phx_debounce: "1000" %>
                     <%= error_tag f, :size %>
                 </div>
                 <div class="field">
                     <%= label f, :git_repo, "Git Repo" %>
-                    <%= text_input f, :git_repo, autocomplete: "off" %>
+                    <%= text_input f, :git_repo, 
+                          autocomplete: "off",
+                          phx_debounce: "1000" %>
                     <%= error_tag f, :git_repo %>
                 </div>
                 <%= submit "Save", phx_disable_with: "Saving..."  %>
@@ -47,9 +59,12 @@
             <div class="card">
                 <div class="header">
                     <h2><%= @selected_server.name %></h2>
-                    <span class="<%= @selected_server.status %>">
-                <%= @selected_server.status %>
-              </span>
+                    <button class="<%= @selected_server.status %>"
+                            phx-click="toggle-status"
+                            phx-value-id="<%= @selected_server.id %>"
+                            phx-disable-with="Saving...">
+                      <%= @selected_server.status %>
+                    </button>
                 </div>
                 <div class="body">
                     <div class="row">
